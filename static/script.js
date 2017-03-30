@@ -21,12 +21,12 @@ window.onload = function() {
     var context = canvas.getContext('2d');
 
     // Websocket
-    var ws = new WebSocket('ws://localhost:5000/echo');
+    var ws = new WebSocket('ws://' + window.location.host + '/upload');
+    var socketSending = false;
     ws.addEventListener('message', function(e) {
         console.log(e.data.size);
         socketSending = false;
     }, false);
-    var socketSending = false;
 
     //エラー
     var onFailSoHard = function(e) {
@@ -57,15 +57,8 @@ window.onload = function() {
         }, onFailSoHard);
     }
 
-    $("#canvas").click(function() {
-        if (localMediaStream) {
-            //canvas画像のバイナリー化
-            var blob = toBlob(canvas);
-        }
-    });
-
     function toBlob(canvas) {
-        var base64 = canvas.toDataURL('image/png');
+        var base64 = canvas.toDataURL('image/jpeg');
         // Base64からバイナリへ変換
         var bin = atob(base64.replace(/^.*,/, ''));
         var buffer = new Uint8Array(bin.length);
@@ -74,7 +67,7 @@ window.onload = function() {
         }
         // Blobを作成
         var blob = new Blob([buffer.buffer], {
-            type: 'image/png'
+            type: 'image/jpeg'
         });
         return blob;
     }
